@@ -1,5 +1,4 @@
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -69,18 +68,33 @@ public class GLMProject {
             tempMap = new HashMap<>();
         }
     }
-    private void displayComparison() {
-        for (String key : compareValuesMap.keySet()) {
-            System.out.println(key);
-            for (String compareKey : compareValuesMap.get(key).keySet()) {
-                System.out.println(compareValuesMap.get(key).get(compareKey));
-            }
+    private void displayComparison(File inputFile) {
+        try {
+            BufferedWriter bf = new BufferedWriter(new FileWriter(inputFile, true));
+            for (String key : compareValuesMap.keySet()) {
+                bf.write(key);
+                bf.newLine();
+                for (String compareKey : compareValuesMap.get(key).keySet()) {
+                    String value = compareValuesMap.get(key).get(compareKey);
+                    value = value.replace(",", " = ");
+                    value = "M" + value;
 
+                    bf.write(value);
+                    bf.newLine();
+                }
+                bf.newLine();
+            }
+            bf.close();
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
     public void execute(File inputFile) {
         readFile(inputFile);
         compareMarkers();
-        displayComparison();
+
+        String filePath = "GLM_output.txt";
+        displayComparison(new File(filePath));
     }
 }
